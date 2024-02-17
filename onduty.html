@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duty Status Calculator</title>
+    <style>
+        /* Your CSS styles go here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .result {
+            font-weight: bold;
+            background-color: violet;
+            color: blue;
+        }
+        button {
+            background-color: yellow;
+            color: green;
+        }
+        label {
+            font-weight: bold;
+            background-color: yellow;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Duty Status Calculator</h1>
+    <label for="txtDate">Enter a date (mm/dd/yyyy):</label>
+    <input type="text" id="txtDate" placeholder="e.g., 02/15/2024">
+    <button onclick="calculate()">Calculate</button>
+    <p class="result" id="lblResult"></p>
+    <p id="currentDate"></p> <!-- New line for displaying the current date -->
+
+    <script>
+        // Your JavaScript code goes here
+        function calculate() {
+            const inputDate = document.getElementById("txtDate").value;
+            const dayOfWeek = getDayOfWeek(inputDate);
+            const dutyStatus = getDutyStatus(inputDate);
+            document.getElementById("lblResult").textContent = `The ${inputDate} is on: ${dayOfWeek}: ${dutyStatus}`;
+
+            // Display the current date
+            const currentDate = new Date();
+            document.getElementById("currentDate").textContent = `Current Date: ${currentDate.toLocaleDateString()}`;
+        }
+
+        function getDayOfWeek(date) {
+            const inputDate = new Date(date);
+            return inputDate.toLocaleDateString("en-US", { weekday: "long" });
+        }
+
+        function getDutyStatus(date) {
+            const inputDate = new Date(date);
+            const startDate = new Date("2024/02/14"); // February is month 1
+            const difference = inputDate - startDate;
+            const daysDifference = Math.floor(difference / (1000 * 60 * 60 * 24));
+
+                       if (daysDifference >= 0) {
+                const cycleLength = 4; // Number of days in the duty cycle
+                const dayIndex = daysDifference % cycleLength;
+
+                if (dayIndex === 0) {
+                    return "Off duty.";
+                } else if (dayIndex === 1) {
+                    return "On duty during the Day.";
+                } else if (dayIndex === 2) {
+                    return "Off duty";
+                } else if (dayIndex === 3) {
+                    return "On duty during the Night.";
+                }
+            }
+            return "Invalid date";
+        }
+    </script>
+</body>
+</html>
