@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duty Status</title>
+    <style>
+        /* Add your CSS styling here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>Duty Status</h1>
+    <label for="dateInput">Enter a date (DD/MM/YYYY):</label>
+    <input type="text" id="dateInput">
+    <button onclick="calculateDayOfWeek()">Calculate</button>
+    <p id="result"></p>
+
+    <script>
+        function calculateDayOfWeek() {
+            const inputDate = document.getElementById("dateInput").value;
+            const parsedDate = new Date(inputDate);
+
+            if (!isNaN(parsedDate)) {
+                const dayOfWeek = parsedDate.toLocaleDateString(undefined, { weekday: 'long' });
+                const dutyStatus = getDutyStatus(parsedDate);
+
+                document.getElementById("result").textContent = `The day of the week for ${inputDate} is ${dayOfWeek}. ${dutyStatus}`;
+            } else {
+                document.getElementById("result").textContent = "Invalid date.";
+            }
+        }
+
+        function getDutyStatus(date) {
+            const startDate1 = new Date(2024, 1, 15); // Group 1 starts duty
+            const startDate2 = new Date(2024, 1, 14); // Group 2 starts duty
+
+            const difference1 = date - startDate1;
+            const difference2 = date - startDate2;
+
+            const daysDifference1 = Math.floor(difference1 / (1000 * 60 * 60 * 24));
+            const daysDifference2 = Math.floor(difference2 / (1000 * 60 * 60 * 24));
+
+            const cycleLength = 4; // Number of days in the duty cycle
+            const dayIndex1 = daysDifference1 % cycleLength;
+            const dayIndex2 = daysDifference2 % cycleLength;
+
+            const group1Status = getGroupStatus(dayIndex1, "Group 1");
+            const group2Status = getGroupStatus(dayIndex2, "Group 2");
+
+            return `${group1Status}\n${group2Status}`;
+        }
+
+        function getGroupStatus(dayIndex, groupName) {
+            if (dayIndex === 0 || dayIndex === 2) {
+                return `${groupName}A: Off duty, ${groupName}B: Off duty`;
+            } else if (dayIndex === 1) {
+                return `${groupName}A: On duty during the Day, ${groupName}B: On duty during the Night`;
+            } else if (dayIndex === 3) {
+                return `${groupName}A: On duty during the Night, ${groupName}B: On duty during the Day`;
+            }
+            return "Invalid index.";
+        }
+    </script>
+</body>
+</html>
